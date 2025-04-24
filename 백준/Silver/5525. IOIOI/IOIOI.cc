@@ -6,6 +6,7 @@ int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    cout.tie(nullptr);
 
     int N, M;
     string S;
@@ -13,29 +14,41 @@ int main()
     cin >> N >> M;
     cin >> S;
 
-    string Find = "I";
+    int Offset = 0, Answer = 0;
+    int IOICount = 0;
 
-    for (int i = 0; i < N; ++i)
-        Find += "OI";
-
-    size_t Offset = 0;
-    int Answer = 0;
-    while (Offset != string::npos)
+    // IOI 개수를 알아야 한다.
+    // I -> O -> I 진행
+    // I -> I -> O
+    // I -> O -> O
+    // O -> +1 Offset
+    while (Offset < M)
     {
-        Offset = S.find(Find, Offset);
-
-        if (Offset != string::npos)
+        if ('I' == S[Offset])
         {
-            ++Offset;
-            ++Answer;
+            // 조건 충족
+            if (Offset + 2 < M && 'O' == S[Offset + 1] && 'I' == S[Offset + 2])
+            {
+                ++IOICount;
+                Offset += 2;
+            }
+            else
+            {
+                if (N <= IOICount)
+                {
+                    Answer = Answer + IOICount - N + 1;
+                }
+                ++Offset;
+                IOICount = 0;
+            }
         }
         else
-            break;
+        {
+            ++Offset;
+        }
     }
 
     cout << Answer;
 
-
-    
     return 0;
 }
