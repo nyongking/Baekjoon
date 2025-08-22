@@ -1,77 +1,66 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cmath>
 using namespace std;
 
-#include <set>
-#include <algorithm>
-// 소인수 분해 -> 약수 -> 공약수 -> 최대 공약수
-
-// 둘 사이의 최대공약수 구하기
-int GreatestCommonDivisor(int A, int B)
-{
-    int MinNum = min(A, B);
-    
-    if (0 == A % MinNum && 0 == B % MinNum)
-        return MinNum;
-
-    for (int i = MinNum / 2 + 1; i > 0; --i)
-    {
-        if (0 == A % i && 0 == B % i)
-            return i;
-    }
-
-    return 1;
-}
-
-// 최대 공약수 -> 약수 구하기
-void PrintCommons(int Input)
-{
-    set<int> Divs;
-
-    int Start = 1;
-    do
-    {
-        if (0 == Input % Start)
-        {
-            Divs.insert(Start);
-            Divs.insert(Input / Start);
-        }
-
-        ++Start;
-    } while (Start <= Input / 2);
-
-    for (auto& div : Divs)
-    {
-        cout << div << '\n';
-    }
-}
 
 int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    cout.tie(nullptr);
 
-    int N;
-    int Input[3] = {};
-    int Answer = 1;
+    int n;
+    cin >> n;
 
-    cin >> N;
+    int Number1;
+    cin >> Number1;
 
-    for (int i = 0; i < N; ++i)
+    int gcd = 1;
+    for (int i = 1; i < n; ++i)
     {
-        cin >> Input[i];
+        int Number2;
+        cin >> Number2;
+
+        while (true)
+        {
+            if (Number1 < Number2)
+                swap(Number1, Number2);
+
+            int Remain = Number1 % Number2;
+
+            if (0 == Remain)
+            {
+                gcd = Number2;
+                break;
+            }
+
+            Number1 = Number2;
+            Number2 = Remain;
+        }
+
+        Number1 = gcd;
     }
 
-    Answer = Input[0];
+    vector<int> cds;
 
-    for (int i = 0; i < N - 1; ++i)
+    for (int i = 1; i * i <= gcd; ++i)
     {
-        Answer = GreatestCommonDivisor(Answer, Input[i + 1]);
+        if (0 == gcd % i)
+        {
+            int div = gcd / i;
+            if (div != i)
+                cds.push_back(i);
+            cds.push_back(div);
+        }
     }
 
-    if (1 == Answer)
-        cout << 1;
-    else
-        PrintCommons(Answer);
+    sort(cds.begin(), cds.end());
+
+    for (int cd : cds)
+        cout << cd << '\n';
 
     return 0;
 }
